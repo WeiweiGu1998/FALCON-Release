@@ -6,7 +6,7 @@ from utils import join
 
 
 class DatasetCatalog:
-    DATASET_ROOT = "/data/vision/billf/scratch/jerrymei/datasets/"
+    DATASET_ROOT = "/scratch/weiweigu/data"
     CLEVR_ROOT = join(DATASET_ROOT, "CLEVR_v1.0")
     CUB_ROOT = join(DATASET_ROOT, "CUB-200-2011")
     GQA_ROOT = join(DATASET_ROOT, "GQA")

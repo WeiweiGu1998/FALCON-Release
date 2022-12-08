@@ -41,9 +41,10 @@ class FewshotModel(nn.Module):
         return self.feature_extractor.get(index, image.unsqueeze(0))
 
     def forward_feature_extractor(self, samples):
-        if "pretrained" in samples:
-            features, relations = self._forward_pretrained(*map(samples.get, ["image_index", "pretrained"]))
-        elif "mask" in samples:
+        # (@Weiwei)Disable this part for we always want the model to have the feature extractor
+        #if "pretrained" in samples:
+        #    features, relations = self._forward_pretrained(*map(samples.get, ["image_index", "pretrained"]))
+        if "mask" in samples:
             features, relations = self._forward_masked(*map(samples.get, ["image_index", "image", "mask"]))
         else:
             features, relations = self._forward_unmasked(*map(samples.get, ["image_index", "image"]))

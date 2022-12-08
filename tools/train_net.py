@@ -86,8 +86,8 @@ def train(cfg, args):
                     f"ram: {ram}"]))
             train_metrics.log_summary(train_set.tag, iteration)
 
-        if iteration % 100 == 0:
-            train_visualizer.visualize(inputs, outputs, model, iteration)
+        #if iteration % 100 == 0:
+        #    train_visualizer.visualize(inputs, outputs, model, iteration)
 
         if iteration % checkpoint_period == 0:
             checkpointer.save(iteration)
@@ -118,7 +118,7 @@ def train(cfg, args):
                         logger.info(val_metrics.delimiter.join(
                             [f"{str(val_metrics)}", f"iter: {iteration + i}", f"gpu mem: {memory:.0f}",
                                 f"ram: {ram}", "validating"]))
-                        val_visualizer.visualize(inputs_, outputs_, model, iteration + i)
+                        #val_visualizer.visualize(inputs_, outputs_, model, iteration + i)
 
                     if i >= max_val_iter:
                         break

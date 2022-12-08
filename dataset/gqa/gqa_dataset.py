@@ -135,10 +135,11 @@ class GqaDataset(Dataset):
 
     def get_stacked_scenes(self, image_index):
         assert not torch.is_tensor(image_index)
-        if self.has_mask:
-            return {"pretrained": self.get_object_features(image_index)}
-        else:
-            return {'image': self.transform(self.get_image(image_index))}
+        #(@Weiwei)comment this out because we want to train with the feature extractors with GQA
+        #if self.has_mask:
+        #    return {"pretrained": self.get_object_features(image_index)}
+        #else:
+        return {'image': self.transform(self.get_image(image_index))}
 
     def exist_question(self, candidate):
         return f"Is there a {self.names[candidate]} object?"
