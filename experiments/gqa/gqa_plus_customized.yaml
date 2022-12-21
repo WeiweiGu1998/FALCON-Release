@@ -1,0 +1,12 @@
+DATASETS:
+    TEST: gqa_fewshot_test
+    TRAIN: gqa_fewshot_train
+    VAL: gqa_fewshot_val
+MODEL:
+    NAME: graphical
+    FEATURE_EXTRACTOR:
+        FROM_FEATURE_DIM: 0
+TEMPLATE:
+- meta
+- gqa
+- box
