@@ -115,6 +115,7 @@ class GqaDataset(Dataset):
                 concept_split_specs[c] = 2
             if self.concept2kinds[c] == len(self.kinds_) - 1:
                 concept_split_specs[c] = 0
+        concept_split_specs[-1] = 2
         return torch.tensor(concept_split_specs)
 
     def get_image(self, image_index):
@@ -158,7 +159,7 @@ class GqaDataset(Dataset):
         return f"{', '.join(other_names + [self.names[concept_index]])} describes the same property of an " \
                f"object.".capitalize()
 
-    @file_cached("word_tokens")
+    #@file_cached("word_tokens")
     def _build_word_tokens(self):
         vocabulary = WordVocab()
         vocabulary.update(self.names)
