@@ -14,6 +14,8 @@ from utils import setup_logger, SummaryWriter, Metric
 from utils import start_up, ArgumentParser, data_parallel
 from utils import to_cuda
 from visualization import build_visualizer
+from utils import load
+from models import build_program
 
 
 def test(cfg, args):
