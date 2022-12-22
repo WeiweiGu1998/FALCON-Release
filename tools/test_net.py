@@ -45,10 +45,10 @@ def test(cfg, args):
             model.eval()
             evaluated = test_set.init_evaluate(args.mode)
             for i, inputs in enumerate(tqdm_cycle(test_loader)):
-                breakpoint()
                 data_time = time.time() - last_batch_time
                 inputs = to_cuda(inputs)
                 outputs = model(inputs)
+                breakpoint()
                 model.callback(inputs, outputs)
                 test_set.callback(i)
                 test_set.batch_evaluate(inputs, outputs, evaluated)

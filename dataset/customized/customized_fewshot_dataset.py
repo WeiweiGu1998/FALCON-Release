@@ -12,7 +12,7 @@ from dataset.meta_dataset import MetaDataset, MetaBuilderDataset
 from torchvision.transforms import functional as TF
 from dataset.utils import FixedResizeTransform, WordVocab, ProgramVocab
 from dataset.utils import sample_with_ratio
-from utils import load, join, nonzero
+from utils import load, join, nonzero, read_image
 
 
 class CustomizedFewshotDataset(MetaDataset):
@@ -25,12 +25,17 @@ class CustomizedFewshotDataset(MetaDataset):
     def transform_fn(self):
         return FixedResizeTransform
 
-    def __init__(self, cfg, args):
+    def __init__(self, cfg, word_vocab, names, named_entries, kinds, use_text, args):
         super().__init__(cfg, args)
         self.root="/scratch/weiweigu/data/customized_set"
+        self.word_vocab = word_vocab
+        self.names = names
+        self.named_entries_ = named_entries
+        self.kinds_ = kinds
+        self.use_text = use_text
         self.questions = self._build_questions()
-        #self.split_specs = self.concept2splits[self.question_concepts]
-        #self.indices_split = self.select_split(self.split_specs)
+        self.split_specs = torch.Tensor([2]) 
+        self.indices_split = self.select_split(self.split_specs)
 
     def get_image(self, image_index):
         return TF.to_tensor(read_image(join(self.root, f"images/{image_index}.jpg")))

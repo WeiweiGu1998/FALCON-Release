@@ -1,4 +1,7 @@
+from yacs.config import CfgNode as CN
+
 import datetime
+import copy
 import logging
 import os
 import time
@@ -6,6 +9,8 @@ import time
 import torch
 
 from dataset.utils import DataLoader, tqdm_cycle
+from dataset.customized import CustomizedFewshotDataset
+
 from experiments import cfg_from_args
 from models import build_model
 from tools.dataset_catalog import DatasetCatalog
@@ -14,8 +19,6 @@ from utils import setup_logger, SummaryWriter, Metric
 from utils import start_up, ArgumentParser, data_parallel
 from utils import to_cuda
 from visualization import build_visualizer
-from utils import load
-from models import build_program
 
 
 def test(cfg, args):
@@ -35,42 +38,54 @@ def test(cfg, args):
     summary_writer = SummaryWriter(output_dir)
 
     model.eval()
-    for dataset_name, test_set in DatasetCatalog(cfg).get(cfg.DATASETS.TEST, args, as_tuple=True):
-        start_testing_time = time.time()
-        last_batch_time = time.time()
-        test_loader = DataLoader(test_set, cfg)
-        test_metrics = Metric(delimiter="  ", summary_writer=summary_writer)
-        visualizer = build_visualizer(cfg.VISUALIZATION, test_set, summary_writer)
-        logger.info(f"Start testing on {test_set} with mode {test_set.mode}.")
+    temp_sets = [] 
+    for dataset_name, temp_set in DatasetCatalog(cfg).get(cfg.DATASETS.TEST, args, as_tuple=True):
+        temp_sets.append(temp_set)
+    temp_set = temp_sets[0]
+    #    start_testing_time = time.time()
+    #    last_batch_time = time.time()
+    #    test_loader = DataLoader(test_set, cfg)
+    #    test_metrics = Metric(delimiter="  ", summary_writer=summary_writer)
+    #    visualizer = build_visualizer(cfg.VISUALIZATION, test_set, summary_writer)
+    #    logger.info(f"Start testing on {test_set} with mode {test_set.mode}.")
+    temp_ = CN(dict(NAME="gqa_fewshot", SPLIT="test", ROOT="/scratch/weiweigu/data/customized_set", OPTS=[], **cfg.CATALOG))
+    word_vocab = copy.deepcopy(temp_set.word_vocab)
+    names = copy.deepcopy(temp_set.names)
+    named_entries = copy.deepcopy(temp_set.named_entries_)
+    kinds = copy.deepcopy(temp_set.kinds_)
+    use_text = copy.deepcopy(temp_set.use_text)
+    
+    test_set = CustomizedFewshotDataset(temp_,word_vocab, names, named_entries, kinds, use_text, args)
+    test_loader = DataLoader(test_set, cfg) 
 
-        with torch.no_grad():
-            model.eval()
-            evaluated = test_set.init_evaluate(args.mode)
-            for i, inputs in enumerate(tqdm_cycle(test_loader)):
-                breakpoint()
-                data_time = time.time() - last_batch_time
-                inputs = to_cuda(inputs)
-                outputs = model(inputs)
-                model.callback(inputs, outputs)
-                test_set.callback(i)
-                test_set.batch_evaluate(inputs, outputs, evaluated)
+    with torch.no_grad():
+        model.eval()
+        #evaluated = test_set.init_evaluate(args.mode)
+        for i, inputs in enumerate(tqdm_cycle(test_loader)):
+            breakpoint()
+            #data_time = time.time() - last_batch_time
+            inputs = to_cuda(inputs)
+            outputs = model(inputs)
+            model.callback(inputs, outputs)
+            #test_set.callback(i)
+            #test_set.batch_evaluate(inputs, outputs, evaluated)
 
-                batch_time = time.time() - last_batch_time
-                last_batch_time = time.time()
-                test_metrics.update(batch_time=batch_time, data_time=data_time)
+            #batch_time = time.time() - last_batch_time
+            #last_batch_time = time.time()
+            #test_metrics.update(batch_time=batch_time, data_time=data_time)
 
-                #if i % 5 == 0:
-                #    visualizer.visualize(inputs, outputs, model, iteration + i)
+            #if i % 5 == 0:
+            #    visualizer.visualize(inputs, outputs, model, iteration + i)
 
-            metrics = test_set.evaluate_metric(evaluated)
-            #visualizer.visualize(evaluated, model, iteration)
-            test_set.save(output_dir, evaluated, iteration, metrics)
-            test_metrics.update(**metrics)
-            test_metrics.log_summary(test_set.tag, iteration)
-            checkpointer.save(9999999, False)
-            logger.warning(test_metrics.delimiter.join([f"iter: {iteration}", f"{test_metrics}"]))
+        #metrics = test_set.evaluate_metric(evaluated)
+        #visualizer.visualize(evaluated, model, iteration)
+    #        test_set.save(output_dir, evaluated, iteration, metrics)
+    #        test_metrics.update(**metrics)
+    #        test_metrics.log_summary(test_set.tag, iteration)
+    #        checkpointer.save(9999999, False)
+    #        logger.warning(test_metrics.delimiter.join([f"iter: {iteration}", f"{test_metrics}"]))
 
-        total_training_time = time.time() - start_testing_time
+        #total_training_time = time.time() - start_testing_time
         logger.info(f"Total testing time: {datetime.timedelta(seconds=total_training_time)}")
 
 
