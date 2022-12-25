@@ -1,0 +1,12 @@
+DATASETS:
+  TRAIN: gqa_concept_support_train
+  VAL: gqa_concept_support_val
+  TEST: gqa_concept_all
+MODEL:
+    NAME: graphical
+    FEATURE_EXTRACTOR:
+        FROM_FEATURE_DIM: 0
+TEMPLATE:
+  - box
+  - gqa
+  - pretrain
