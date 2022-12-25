@@ -13,6 +13,7 @@ from dataset.customized import CustomizedFewshotDataset
 
 from experiments import cfg_from_args
 from models import build_model
+from models.nn import Measure
 from tools.dataset_catalog import DatasetCatalog
 from utils import Checkpointer, mkdir
 from utils import setup_logger, SummaryWriter, Metric
@@ -62,11 +63,15 @@ def test(cfg, args):
         model.eval()
         #evaluated = test_set.init_evaluate(args.mode)
         for i, inputs in enumerate(tqdm_cycle(test_loader)):
-            breakpoint()
             #data_time = time.time() - last_batch_time
             inputs = to_cuda(inputs)
             outputs = model(inputs)
             model.callback(inputs, outputs)
+            new_concept_embedding = model.box_registry[105]
+            metal_embedding = model.box_registry[50]
+            mdl_cfg = cfg.MODEL
+            measure = Measure(mdl_cfg)
+            breakpoint()
             #test_set.callback(i)
             #test_set.batch_evaluate(inputs, outputs, evaluated)
 
