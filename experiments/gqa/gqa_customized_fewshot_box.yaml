@@ -10,3 +10,5 @@ TEMPLATE:
 - meta
 - gqa
 - box
+WEIGHT:
+  FILE: output/gqa_customized_fewshot_box/checkpoints/model_0011000.pth

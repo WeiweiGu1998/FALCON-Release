@@ -68,9 +68,42 @@ def test(cfg, args):
             outputs = model(inputs)
             model.callback(inputs, outputs)
             new_concept_embedding = model.box_registry[105]
+            #Can only test against train embedding
+            # metal, glass as concepts for materials
+            # red, yellow as concepts for colors
+            # bicycle as unrelated concept
             metal_embedding = model.box_registry[50]
+            red_embedding = model.box_registry[70]
+            glass_embedding = model.box_registry[28]
+            bicycle_embedding = model.box_registry[0]
+            yellow_embedding = model.box_registry[104]
             mdl_cfg = cfg.MODEL
             measure = Measure(mdl_cfg)
+            
+            # Intersections
+            metal_new_intersection = measure.intersection(metal_embedding, new_concept_embedding)
+            glass_new_intersection = measure.intersection(glass_embedding, new_concept_embedding)
+            red_new_intersection = measure.intersection(red_embedding, new_concept_embedding)
+            yellow_new_intersection = measure.intersection(yellow_embedding, new_concept_embedding)
+            bicycle_new_intersection = measure.intersection(bicycle_embedding, new_concept_embedding)
+            # IoUs
+            metal_new_iou = measure.iou(metal_embedding, new_concept_embedding)
+            glass_new_iou = measure.iou(glass_embedding, new_concept_embedding)
+            red_new_iou = measure.iou(red_embedding, new_concept_embedding)
+            yellow_new_iou = measure.iou(yellow_embedding, new_concept_embedding)
+            bicycle_new_iou = measure.iou(bicycle_embedding, new_concept_embedding)
+            # new entails concepts
+            metal_new_entailment = measure.entailment(metal_embedding, new_concept_embedding)
+            glass_new_entailment = measure.entailment(glass_embedding, new_concept_embedding)
+            red_new_entailment = measure.entailment(red_embedding, new_concept_embedding)
+            yellow_new_entailment = measure.entailment(yellow_embedding, new_concept_embedding)
+            bicycle_new_entailment = measure.entailment(bicycle_embedding, new_concept_embedding)
+            # concepts entail new
+            new_metal_entailment = measure.entailment( new_concept_embedding,metal_embedding)
+            new_glass_entailment = measure.entailment( new_concept_embedding,glass_embedding)
+            new_red_entailment = measure.entailment(new_concept_embedding, red_embedding)
+            new_yellow_entailment = measure.entailment(new_concept_embedding, yellow_embedding)
+            new_bicycle_entailment = measure.entailment(new_concept_embedding, bicycle_embedding)
             breakpoint()
             #test_set.callback(i)
             #test_set.batch_evaluate(inputs, outputs, evaluated)
