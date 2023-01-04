@@ -53,6 +53,8 @@ def test(cfg, args):
     word_vocab = copy.deepcopy(temp_set.word_vocab)
     names = copy.deepcopy(temp_set.names)
     named_entries = copy.deepcopy(temp_set.named_entries_)
+    x=temp_set.concept2splits.tolist()
+    y=[i for i in range(len(x)) if x[i]==2]
     kinds = copy.deepcopy(temp_set.kinds_)
     use_text = copy.deepcopy(temp_set.use_text)
     
@@ -76,6 +78,7 @@ def test(cfg, args):
             red_embedding = model.box_registry[70]
             glass_embedding = model.box_registry[28]
             bicycle_embedding = model.box_registry[0]
+            blue_embedding = model.box_registry[2]
             yellow_embedding = model.box_registry[104]
             mdl_cfg = cfg.MODEL
             measure = Measure(mdl_cfg)
@@ -102,6 +105,7 @@ def test(cfg, args):
             new_metal_entailment = measure.entailment( new_concept_embedding,metal_embedding)
             new_glass_entailment = measure.entailment( new_concept_embedding,glass_embedding)
             new_red_entailment = measure.entailment(new_concept_embedding, red_embedding)
+            new_blue_entailment = measure.entailment(new_concept_embedding, blue_embedding)
             new_yellow_entailment = measure.entailment(new_concept_embedding, yellow_embedding)
             new_bicycle_entailment = measure.entailment(new_concept_embedding, bicycle_embedding)
             breakpoint()
