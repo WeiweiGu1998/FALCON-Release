@@ -63,7 +63,7 @@ def test(cfg, args):
 
     with torch.no_grad():
         model.eval()
-        #evaluated = test_set.init_evaluate(args.mode)
+        evaluated = test_set.init_evaluate(args.mode)
         for i, inputs in enumerate(tqdm_cycle(test_loader)):
             #data_time = time.time() - last_batch_time
             inputs = to_cuda(inputs)
@@ -108,6 +108,8 @@ def test(cfg, args):
             new_blue_entailment = measure.entailment(new_concept_embedding, blue_embedding)
             new_yellow_entailment = measure.entailment(new_concept_embedding, yellow_embedding)
             new_bicycle_entailment = measure.entailment(new_concept_embedding, bicycle_embedding)
+            test_set.callback(i)
+            test_set.batch_evaluate(inputs, outputs, evaluated)
             breakpoint()
             #test_set.callback(i)
             #test_set.batch_evaluate(inputs, outputs, evaluated)

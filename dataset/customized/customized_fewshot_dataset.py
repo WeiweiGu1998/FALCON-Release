@@ -27,7 +27,7 @@ class CustomizedFewshotDataset(MetaDataset):
 
     def __init__(self, cfg, word_vocab, names, named_entries, kinds, use_text, args):
         super().__init__(cfg, args)
-        self.root="/scratch/weiweigu/data/customized_set"
+        self.root="/home/local/ASUAD/weiweigu/data/customized_set"
         self.word_vocab = word_vocab
         self.names = names
         self.named_entries_ = named_entries
