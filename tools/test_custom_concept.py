@@ -47,7 +47,7 @@ def test(cfg, args):
     #    last_batch_time = time.time()
     #    test_loader = DataLoader(test_set, cfg)
     #    test_metrics = Metric(delimiter="  ", summary_writer=summary_writer)
-    #    visualizer = build_visualizer(cfg.VISUALIZATION, test_set, summary_writer)
+
     #    logger.info(f"Start testing on {test_set} with mode {test_set.mode}.")
     temp_ = CN(dict(NAME="gqa_fewshot", SPLIT="test", ROOT="/scratch/weiweigu/data/customized_set", OPTS=[], **cfg.CATALOG))
     word_vocab = copy.deepcopy(temp_set.word_vocab)
@@ -59,6 +59,7 @@ def test(cfg, args):
     use_text = copy.deepcopy(temp_set.use_text)
     
     test_set = CustomizedFewshotDataset(temp_,word_vocab, names, named_entries, kinds, use_text, args)
+    visualizer = build_visualizer(cfg.VISUALIZATION, test_set, summary_writer)
     test_loader = DataLoader(test_set, cfg) 
 
     with torch.no_grad():
@@ -110,7 +111,8 @@ def test(cfg, args):
             new_bicycle_entailment = measure.entailment(new_concept_embedding, bicycle_embedding)
             test_set.callback(i)
             test_set.batch_evaluate(inputs, outputs, evaluated)
-            breakpoint()
+            targets = {i+2:x for i,x in enumerate(inputs["val_sample"]["target"].bool().squeeze().tolist())}
+            preds = {i+2: (x>0).tolist()[0] for i,x in enumerate(outputs["val_sample"]["end"][0])}
             #test_set.callback(i)
             #test_set.batch_evaluate(inputs, outputs, evaluated)
 
@@ -118,11 +120,12 @@ def test(cfg, args):
             #last_batch_time = time.time()
             #test_metrics.update(batch_time=batch_time, data_time=data_time)
 
-            #if i % 5 == 0:
-            #    visualizer.visualize(inputs, outputs, model, iteration + i)
+            if i % 5 == 0:
+                visualizer.visualize(inputs, outputs, model, iteration + i)
 
         #metrics = test_set.evaluate_metric(evaluated)
-        #visualizer.visualize(evaluated, model, iteration)
+        breakpoint()
+        visualizer.visualize(evaluated, model, iteration)
     #        test_set.save(output_dir, evaluated, iteration, metrics)
     #        test_metrics.update(**metrics)
     #        test_metrics.log_summary(test_set.tag, iteration)

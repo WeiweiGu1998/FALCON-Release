@@ -36,6 +36,7 @@ class CustomizedFewshotDataset(MetaDataset):
         self.questions = self._build_questions()
         self.split_specs = torch.Tensor([2]) 
         self.indices_split = self.select_split(self.split_specs)
+        self.image_filenames = [f"{i}.jpg" for i in range(29)]
 
     def get_image(self, image_index):
         return TF.to_tensor(read_image(join(self.root, f"images/{image_index}.jpg")))
@@ -45,3 +46,6 @@ class CustomizedFewshotDataset(MetaDataset):
 
     def _build_questions(self):
         return load(join(self.root, "custom_fewshot.json"))
+
+    def get_annotated_image(self, image_index, mask_index=None):
+        return self.get_image(image_index)

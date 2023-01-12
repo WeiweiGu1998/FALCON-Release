@@ -56,11 +56,12 @@ def test(cfg, args):
                 last_batch_time = time.time()
                 test_metrics.update(batch_time=batch_time, data_time=data_time)
 
-                #if i % 5 == 0:
-                #    visualizer.visualize(inputs, outputs, model, iteration + i)
+                if i % 5 == 0:
+                    visualizer.visualize(inputs, outputs, model, iteration + i)
 
             metrics = test_set.evaluate_metric(evaluated)
-            #visualizer.visualize(evaluated, model, iteration)
+            breakpoint()
+            visualizer.visualize(evaluated, model, iteration)
             test_set.save(output_dir, evaluated, iteration, metrics)
             test_metrics.update(**metrics)
             test_metrics.log_summary(test_set.tag, iteration)

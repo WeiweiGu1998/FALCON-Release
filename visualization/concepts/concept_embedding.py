@@ -10,9 +10,8 @@ class ConceptEmbeddingVisualizer(Visualizer):
     per_batch = False
 
     def visualize(self, results, model, iteration, **kwargs):
-        embeddings = results["embedding"]
-        labels = results["label"]
-
+        embeddings = torch.stack(results["queried_embedding"])
+        #labels = results["label"]
         # dimension_stddev
         if model.rep == "box":
             dim = embeddings.shape[-1] // 2
@@ -29,18 +28,18 @@ class ConceptEmbeddingVisualizer(Visualizer):
         self.summary_writer.add_figure(f"weight_stddev_by_dimension/{self.dataset.tag}/sorted", fig, iteration)
 
         # weight by split
-        split2weight = defaultdict(list)
-        for e, l in zip(embeddings, labels):
-            if model.rep == "box":
-                dim = e.shape[-1] // 2
-                size = e[dim:].mean()
-            else:
-                size = e.norm()
-            split2weight[self.dataset.concept_split_specs[l].item()].append(size)
-        split2weight = {k: torch.stack(v) for k, v in split2weight.items()}
+        #split2weight = defaultdict(list)
+        #for e, l in zip(embeddings, labels):
+        #    if model.rep == "box":
+        #        dim = e.shape[-1] // 2
+        #        size = e[dim:].mean()
+        #    else:
+        #        size = e.norm()
+        #    split2weight[self.dataset.concept_split_specs[l].item()].append(size)
+        #split2weight = {k: torch.stack(v) for k, v in split2weight.items()}
 
-        for split, weight in sorted(split2weight.items()):
-            self.summary_writer.add_histogram(f"weight_by_split/{self.dataset.tag}", weight, split)
+        #for split, weight in sorted(split2weight.items()):
+        #    self.summary_writer.add_histogram(f"weight_by_split/{self.dataset.tag}", weight, split)
 
         # weight by dimension
         if model.rep == "box":

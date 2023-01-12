@@ -6,5 +6,6 @@ SOLVER:
   BATCH_SIZE: 1
   CHECKPOINT_PERIOD: 1000
 VISUALIZATION:
+  - concept_embedding
   - fewshot
   - drift_box
